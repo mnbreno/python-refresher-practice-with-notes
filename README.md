@@ -2,6 +2,8 @@
 
 A small Tkinter calculator for practicing Python functions, state, callbacks, and GUI events. The comments explain the Python and Tkinter terms used in the project.
 
+See the [architecture diagrams](docs/architecture.md) for the component and event-flow views.
+
 ## Versioning
 
 The current version is recorded in `VERSION`. Update it in every commit so each commit has its own version: increment the patch number for fixes and documentation, the minor number for backward-compatible features, and the major number for incompatible changes. Published Git tags and releases use the same number with a `v` prefix.
@@ -43,7 +45,7 @@ The unit suite checks normal results and failures, then stresses each arithmetic
 Restore the latest known-good release into a new, empty folder (PowerShell):
 
 ```powershell
-.\scripts\recover.ps1 -Version v1.2.1 -Destination ..\python-calculator-recovered
+.\scripts\recover.ps1 -Version v1.2.2 -Destination ..\python-calculator-recovered
 ```
 
 The script refuses to overwrite an existing destination. The source has no user data to restore; after recovery, run `python calculator.py` in the new folder.

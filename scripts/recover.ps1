@@ -1,7 +1,7 @@
 param(
     [Parameter()]
     [ValidatePattern('^v\d+\.\d+\.\d+$')]
-    [string]$Version = 'v1.2.1',
+    [string]$Version = 'v1.2.2',
 
     [Parameter(Mandatory = $true)]
     [string]$Destination
