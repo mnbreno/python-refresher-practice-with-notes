@@ -52,7 +52,7 @@ The script refuses to overwrite an existing destination. The source has no user 
 
 ## Security status
 
-This repository contains Python source, not a packaged executable, and that source has not been scanned as a binary. The VirusTotal result below applies only to the companion C Windows executable; it is not a verdict on this Python project. See the [C project security notes](https://github.com/mnbreno/c-refresher-practice-with-notes#security-status) for the hash, vendor results, and review status.
+This repository contains Python source, not a packaged executable, and that source has not been scanned as a binary. The VirusTotal result applies only to the companion C Windows executable; it is not a verdict on this Python project. The C report was rechecked on 2026-10-29 at about 12:50 EDT and still showed 2 of 71 vendors flagging it. See the [C project security notes](https://github.com/mnbreno/c-refresher-practice-with-notes#security-status) for the exact hash, vendor names, latest analysis timestamp, and review guidance.
 
 ## Topics practiced
 
