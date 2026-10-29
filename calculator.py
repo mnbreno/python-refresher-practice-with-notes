@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 
 # tkinter is a standard-library GUI module. The `as tk` import creates a shorter
@@ -23,6 +24,11 @@ import tkinter as tk
 # arithmetic, format_number owns display formatting, and main builds the GUI.
 # Keeping these responsibilities separate makes each part easier to follow and
 # lets both mouse and keyboard events use the same press function.
+#
+# Error handling: calculate raises an exception when an operation is invalid or
+# produces a non-finite result. The button callback catches these expected math
+# and conversion errors, shows "Error", and clears pending state so input can
+# continue after the user enters a new digit or presses C.
 
 # Keep arithmetic independent from tkinter so a GUI event handler can call the
 # same tested operation logic for every input method.
@@ -33,17 +39,25 @@ def calculate(left: float, operator: str, right: float) -> float:
     does not enforce annotations at runtime. The GUI converts display text to
     float before calling calculate.
     """
+    if not math.isfinite(left) or not math.isfinite(right):
+        raise ValueError("Calculator inputs must be finite numbers")
+
     if operator == "+":
-        return left + right
-    if operator == "-":
-        return left - right
-    if operator == "*":
-        return left * right
-    if operator == "/":
+        result = left + right
+    elif operator == "-":
+        result = left - right
+    elif operator == "*":
+        result = left * right
+    elif operator == "/":
         if right == 0:
             raise ZeroDivisionError("Cannot divide by zero")
-        return left / right
-    raise ValueError(f"Unsupported operator: {operator}")
+        result = left / right
+    else:
+        raise ValueError(f"Unsupported operator: {operator}")
+
+    if not math.isfinite(result):
+        raise OverflowError("The result is too large to display")
+    return result
 
 
 # The Entry widget displays strings, so convert a numeric result to display text
@@ -51,6 +65,8 @@ def calculate(left: float, operator: str, right: float) -> float:
 # digits after the decimal point.
 def format_number(value: float) -> str:
     """Remove .0 from whole answers and limit output to 12 significant digits."""
+    if not math.isfinite(value):
+        raise ValueError("Cannot display a non-finite number")
     return str(int(value)) if value.is_integer() else format(value, ".12g")
 
 
@@ -80,6 +96,16 @@ def main() -> None:
     stored_value: float | None = None
     pending_operator: str | None = None
     start_new_number = True
+
+    def show_error() -> None:
+        """Show a safe error state and discard any unfinished calculation."""
+        nonlocal stored_value, pending_operator, start_new_number
+        # Clear both the display status and saved operands so a later click
+        # cannot accidentally continue a calculation that already failed.
+        display_var.set("Error")
+        stored_value = None
+        pending_operator = None
+        start_new_number = True
 
     def press(label: str) -> None:
         # This is an event handler: each button's command callback calls it with
@@ -119,13 +145,20 @@ def main() -> None:
         if label in {"+", "-", "*", "/"}:
             if current_text == "Error":
                 return
-            current_value = float(current_text)
-            if pending_operator is not None and not start_new_number:
-                current_value = calculate(stored_value, pending_operator, current_value)
-                display_var.set(format_number(current_value))
-            stored_value = current_value
-            pending_operator = label
-            start_new_number = True
+            try:
+                current_value = float(current_text)
+                if pending_operator is not None and not start_new_number:
+                    current_value = calculate(
+                        stored_value, pending_operator, current_value
+                    )
+                    display_var.set(format_number(current_value))
+                stored_value = current_value
+                pending_operator = label
+                start_new_number = True
+            except (ValueError, ZeroDivisionError, OverflowError):
+                # GUI callbacks need to catch expected input/math errors so a
+                # bad value shows on the display instead of escaping the event loop.
+                show_error()
             return
 
         if label == "=" and pending_operator is not None and stored_value is not None:
@@ -135,11 +168,8 @@ def main() -> None:
                 stored_value = None
                 pending_operator = None
                 start_new_number = True
-            except ZeroDivisionError:
-                display_var.set("Error")
-                stored_value = None
-                pending_operator = None
-                start_new_number = True
+            except (ValueError, ZeroDivisionError, OverflowError):
+                show_error()
 
     # Store layout data as (label, row, column) tuples, then create all buttons in
     # one loop. This keeps placement data together and avoids duplicating setup.
