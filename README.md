@@ -45,14 +45,14 @@ The unit suite checks normal results and failures, then stresses each arithmetic
 Restore the latest known-good release into a new, empty folder (PowerShell):
 
 ```powershell
-.\scripts\recover.ps1 -Version v1.2.2 -Destination ..\python-calculator-recovered
+.\scripts\recover.ps1 -Version v1.2.6 -Destination ..\python-calculator-recovered
 ```
 
 The script refuses to overwrite an existing destination. The source has no user data to restore; after recovery, run `python calculator.py` in the new folder.
 
 ## Security status
 
-This repository contains Python source, not a packaged executable, and that source has not been scanned as a binary. The VirusTotal result applies only to the companion C Windows executable; it is not a verdict on this Python project. The C report was rechecked on 2026-10-29 at about 12:50 EDT and still showed 2 of 71 vendors flagging it. See the [C project security notes](https://github.com/mnbreno/c-refresher-practice-with-notes#security-status) for the exact hash, vendor names, latest analysis timestamp, and review guidance.
+This repository contains Python source, not a packaged executable, and that source has not been scanned as a binary. The companion C v1.2.8 release includes a new Windows executable whose [VirusTotal report](https://www.virustotal.com/gui/file/b9aeec49fec212a73dcb9b3aced5a67a486c1cf3a1142924f5898b7d7540f030) showed **0 of 69 detections** in the analysis dated 2026-10-29 at 17:20:38 EDT. Bkav Pro and Webroot both reported Undetected. This result applies only to that exact C executable. See the [C project executable and scan notes](https://github.com/mnbreno/c-refresher-practice-with-notes#executable-and-virustotal-report) for its checksum and build details.
 
 ## Topics practiced
 
