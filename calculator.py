@@ -1,4 +1,9 @@
 import math
+from datetime import datetime
+from pathlib import Path
+import sys
+import traceback
+from types import TracebackType
 import tkinter as tk
 
 # tkinter is a standard-library GUI module. The `as tk` import creates a shorter
@@ -25,10 +30,48 @@ import tkinter as tk
 # Keeping these responsibilities separate makes each part easier to follow and
 # lets both mouse and keyboard events use the same press function.
 #
+# Memory management: Python allocates objects as they are needed and reclaims
+# unreachable objects with reference counting and cyclic garbage collection.
+# Tk widgets belong to their parent window, so closing the root window destroys
+# its child widgets. Avoid keeping extra global references to widgets or callbacks
+# after closing the window; long-lived references can keep objects reachable.
+# Python manages ordinary objects automatically, but external resources such as
+# open files should still be closed with `with` so cleanup happens on every path.
+#
+# Crash log: log_uncaught_exception records a timestamp and formatted traceback
+# for unexpected top-level and Tk callback exceptions. It opens the log in append
+# mode with a context manager, so the file handle closes after every write. The
+# log is diagnostic text, not a memory dump, and can include local file paths.
+#
 # Error handling: calculate raises an exception when an operation is invalid or
 # produces a non-finite result. The button callback catches these expected math
 # and conversion errors, shows "Error", and clears pending state so input can
 # continue after the user enters a new digit or presses C.
+# Unexpected exceptions are written to calculator-crash.log with their traceback.
+# Expected calculator errors are handled on the display and are not crash logs.
+
+CRASH_LOG = Path(__file__).with_name("calculator-crash.log")
+
+
+def log_uncaught_exception(
+    exception_type: type[BaseException],
+    exception: BaseException,
+    exception_traceback: TracebackType | None,
+) -> None:
+    """Append an uncaught exception and traceback to the local crash log."""
+    crash_record = (
+        f"\n[{datetime.now().astimezone().isoformat()}] Uncaught exception\n"
+        + "".join(traceback.format_exception(
+            exception_type, exception, exception_traceback
+        ))
+    )
+    try:
+        # `with` closes the file even if writing the record raises an exception.
+        with CRASH_LOG.open("a", encoding="utf-8") as crash_file:
+            crash_file.write(crash_record)
+    except OSError:
+        # If logging itself fails, preserve the normal Python error report.
+        sys.__excepthook__(exception_type, exception, exception_traceback)
 
 # Keep arithmetic independent from tkinter so a GUI event handler can call the
 # same tested operation logic for every input method.
@@ -73,7 +116,11 @@ def format_number(value: float) -> str:
 def main() -> None:
     # main owns GUI setup. An event is an input or window-system notification;
     # examples here include a button click, key press, or window close request.
+    # Tkinter's default callback handler writes tracebacks to stderr. Point it
+    # and Python's top-level exception hook at the same crash-log writer.
+    sys.excepthook = log_uncaught_exception
     root = tk.Tk()
+    root.report_callback_exception = log_uncaught_exception
     root.title("Calculator")
     root.resizable(False, False)
 

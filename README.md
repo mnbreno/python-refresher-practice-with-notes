@@ -20,6 +20,12 @@ The interface supports mouse clicks and keyboard input. Use `Escape` to clear, `
 
 Invalid numeric text, unsupported operations, division by zero, and results too large for a finite `float` display show `Error`. The calculator clears its pending operation so you can start again by entering a digit or pressing `C`.
 
+Unexpected Python exceptions, including Tk callback exceptions, are appended with a timestamp and traceback to `calculator-crash.log` beside the script. Expected calculator errors are handled on the display and are not logged as crashes. This text log can contain local file paths and exception details, so review it before sharing.
+
+## Memory management
+
+Python manages ordinary object memory through reference counting and cyclic garbage collection. Closing the root Tk window destroys its child widgets; avoid keeping extra references to widgets or callbacks after the window closes, because reachable objects cannot be collected. The crash-log file is opened with a context manager so it closes even if writing fails.
+
 ## Topics practiced
 
 - Functions, parameters, return values, and exceptions
