@@ -43,7 +43,7 @@ The unit suite checks normal results and failures, then stresses each arithmetic
 Restore the latest known-good release into a new, empty folder (PowerShell):
 
 ```powershell
-.\scripts\recover.ps1 -Version v1.2.0 -Destination ..\python-calculator-recovered
+.\scripts\recover.ps1 -Version v1.2.1 -Destination ..\python-calculator-recovered
 ```
 
 The script refuses to overwrite an existing destination. The source has no user data to restore; after recovery, run `python calculator.py` in the new folder.
