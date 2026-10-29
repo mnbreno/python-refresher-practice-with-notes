@@ -50,6 +50,10 @@ Restore the latest known-good release into a new, empty folder (PowerShell):
 
 The script refuses to overwrite an existing destination. The source has no user data to restore; after recovery, run `python calculator.py` in the new folder.
 
+## Companion C build scan
+
+The companion C project's Windows build has this [VirusTotal report](https://www.virustotal.com/gui/file/c2d090beaf424d32058f8362d444213d66d156cf99a4b64da8e623204fa624ce) for SHA-256 `C2D090BEAF424D32058F8362D444213D66D156CF99A4B64DA8E623204FA624CE`. On 2026-10-29, 2 of 71 engines flagged it: Bkav Pro (`W32.Malware.139374E5`) and Webroot (`Win.Malware.Gen`). The other 69 reported undetected. This is not a clean verdict; generic detections can be false positives, but that has not been independently confirmed. Review the live report and use your own security judgment. VirusTotal submissions are shared with its security community.
+
 ## Topics practiced
 
 - Functions, parameters, return values, and exceptions
