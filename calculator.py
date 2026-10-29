@@ -43,6 +43,10 @@ import tkinter as tk
 # mode with a context manager, so the file handle closes after every write. The
 # log is diagnostic text, not a memory dump, and can include local file paths.
 #
+# Disaster recovery: the source and release are on GitHub. Clone the repository
+# and check out the last known-good version tag to restore a working copy. This
+# calculator keeps no user data, so recovery means restoring the code and running it.
+#
 # Error handling: calculate raises an exception when an operation is invalid or
 # produces a non-finite result. The button callback catches these expected math
 # and conversion errors, shows "Error", and clears pending state so input can
@@ -260,6 +264,8 @@ def main() -> None:
         # this key event in other bindings after the calculator handles it.
         return "break"
 
+    # GUI cheat sheet: Escape clears, Backspace deletes one character, Enter
+    # calculates, and the number/operator keys enter the matching button action.
     # A binding maps an event pattern to a callback. <Key> matches key presses;
     # bind_all applies this mapping across the application instead of one widget.
     root.bind_all("<Key>", handle_key)

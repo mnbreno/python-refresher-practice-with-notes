@@ -4,3 +4,4 @@ __pycache__/
 venv/
 .env
 calculator-crash.log
+test-results/

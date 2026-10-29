@@ -16,6 +16,8 @@ python calculator.py
 
 The interface supports mouse clicks and keyboard input. Use `Escape` to clear, `Backspace` to delete a digit, and `Enter` to calculate.
 
+See the [GUI cheat sheet](scripts/GUI-CHEATSHEET.md) for all key and button actions.
+
 ## Error handling
 
 Invalid numeric text, unsupported operations, division by zero, and results too large for a finite `float` display show `Error`. The calculator clears its pending operation so you can start again by entering a digit or pressing `C`.
@@ -25,6 +27,26 @@ Unexpected Python exceptions, including Tk callback exceptions, are appended wit
 ## Memory management
 
 Python manages ordinary object memory through reference counting and cyclic garbage collection. Closing the root Tk window destroys its child widgets; avoid keeping extra references to widgets or callbacks after the window closes, because reachable objects cannot be collected. The crash-log file is opened with a context manager so it closes even if writing fails.
+
+## Headless stress tests
+
+Run without starting Tk or opening a display:
+
+```powershell
+python tests/run_headless.py
+```
+
+The unit suite checks normal results and failures, then stresses each arithmetic operator at least 10,000 times. The runner also benchmarks each operator 10,000 times by default and prints elapsed time and operations per second. It writes per-operator measurements to `test-results/python-benchmark.csv`; increase the workload with `--iterations 100000`. Results are ignored by Git because timings depend on the machine and current system load.
+
+## Disaster recovery
+
+Restore the latest known-good release into a new, empty folder (PowerShell):
+
+```powershell
+.\scripts\recover.ps1 -Version v1.2.0 -Destination ..\python-calculator-recovered
+```
+
+The script refuses to overwrite an existing destination. The source has no user data to restore; after recovery, run `python calculator.py` in the new folder.
 
 ## Topics practiced
 
